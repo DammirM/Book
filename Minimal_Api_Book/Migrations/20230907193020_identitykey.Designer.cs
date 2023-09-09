@@ -11,8 +11,8 @@ using Minimal_Api_Book.Context;
 namespace Minimal_Api_Book.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230828080657_initial")]
-    partial class initial
+    [Migration("20230907193020_identitykey")]
+    partial class Identitykey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,18 +33,18 @@ namespace Minimal_Api_Book.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
                     b.Property<string>("About")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Author")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Loan")
                         .HasColumnType("bit");
 
                     b.Property<string>("Titel")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Year")
@@ -52,7 +52,42 @@ namespace Minimal_Api_Book.Migrations
 
                     b.HasKey("BookId");
 
+                    b.HasIndex("GenreId");
+
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("Minimal_Api_Book.Data.Genre", b =>
+                {
+                    b.Property<int>("GenreId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GenreId"));
+
+                    b.Property<string>("GenreName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GenreId");
+
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("Minimal_Api_Book.Data.Book", b =>
+                {
+                    b.HasOne("Minimal_Api_Book.Data.Genre", "Genre")
+                        .WithMany("Books")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("Minimal_Api_Book.Data.Genre", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }

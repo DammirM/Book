@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Minimal_Api_Book.Data
 {
@@ -12,6 +14,8 @@ namespace Minimal_Api_Book.Data
         public string Author { get; set; }
         public int Year { get; set; }
         public bool Loan { get; set; }
+        public int GenreId { get; set; }
+        public Genre Genre { get; set; }
 
     }
 }
