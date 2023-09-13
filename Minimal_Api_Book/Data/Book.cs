@@ -15,6 +15,7 @@ namespace Minimal_Api_Book.Data
         public int Year { get; set; }
         public bool Loan { get; set; }
         public int GenreId { get; set; }
+        [JsonIgnore]
         public Genre Genre { get; set; }
 
     }

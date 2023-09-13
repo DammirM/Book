@@ -1,6 +1,6 @@
 ﻿namespace Minimal_Api_Book.Data
 {
-    public class BookDto
+    public class CreateBookDto
     {
         public string Titel { get; set; }
         public string About { get; set; }

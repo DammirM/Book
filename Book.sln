@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minimal_Api_Book", "Minimal_Api_Book\Minimal_Api_Book.csproj", "{06650ACD-049E-43CD-9478-AE406A1B4EB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minimal_Api_Book", "Minimal_Api_Book\Minimal_Api_Book.csproj", "{06650ACD-049E-43CD-9478-AE406A1B4EB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web-Book", "Web-Book\Web-Book.csproj", "{B1DDB6B3-0DE3-4024-906C-773DED8C5AB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{06650ACD-049E-43CD-9478-AE406A1B4EB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06650ACD-049E-43CD-9478-AE406A1B4EB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06650ACD-049E-43CD-9478-AE406A1B4EB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1DDB6B3-0DE3-4024-906C-773DED8C5AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1DDB6B3-0DE3-4024-906C-773DED8C5AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1DDB6B3-0DE3-4024-906C-773DED8C5AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1DDB6B3-0DE3-4024-906C-773DED8C5AB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

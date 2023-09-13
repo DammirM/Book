@@ -8,7 +8,7 @@ namespace Minimal_Api_Book
 
         public AutoMapperConfig()
         {
-            CreateMap<Book, BookDto>().ReverseMap();
+            CreateMap<Book, CreateBookDto>().ReverseMap();
             CreateMap<Genre, GenreDto>().ReverseMap();
         }
     }

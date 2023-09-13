@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Minimal_Api_Book.Services
 {
-    public class BookRepo : IGenericRepository<BookDto>
+    public class BookRepo : IGenericRepository<Book, CreateBookDto>
     {
 
        private readonly DataContext _Context;
@@ -19,7 +19,7 @@ namespace Minimal_Api_Book.Services
             _Context = db;
             _mapper = mapper;
         }
-        public async Task<BookDto> Add(BookDto bookDto)
+        public async Task<CreateBookDto> Add(CreateBookDto bookDto)
         {
             var existingBook = await _Context.Books.FirstOrDefaultAsync(b =>
                 b.Titel == bookDto.Titel &&
@@ -31,13 +31,14 @@ namespace Minimal_Api_Book.Services
             }
 
             var book = _mapper.Map<Book>(bookDto);
+
             var addedBook = await _Context.Books.AddAsync(book);
             await _Context.SaveChangesAsync();
 
-            return _mapper.Map<BookDto>(addedBook.Entity);
+            return _mapper.Map<CreateBookDto>(addedBook.Entity);
         }
 
-        public async Task<BookDto> Delete(int id)
+        public async Task<Book> Delete(int id)
         {
             var bookToDelete = await _Context.Books.FirstOrDefaultAsync(b => b.BookId == id);
 
@@ -45,32 +46,29 @@ namespace Minimal_Api_Book.Services
             {
                 _Context.Books.Remove(bookToDelete);
                 await _Context.SaveChangesAsync();
-
-                return _mapper.Map<BookDto>(bookToDelete); 
+                return bookToDelete;
             }
 
             return null;
         }
 
 
-        public async Task<IEnumerable<BookDto>> GetAll()
+        public async Task<IEnumerable<Book>> GetAll()
         {
-            var books = await _Context.Books
-                .ProjectTo<BookDto>(_mapper.ConfigurationProvider) 
-                .ToListAsync();
+            var books = await _Context.Books.ToListAsync();
 
             return books;
         }
 
-        public async Task<BookDto> GetSingleById(int id)
+        public async Task<Book> GetSingleById(int id)
         {
             var book = await _Context.Books.FirstOrDefaultAsync(b => b.BookId == id);
 
-            return _mapper.Map<BookDto>(book);
+            return book;
         }
 
 
-        public async Task<BookDto> Update(int id, BookDto bookDto)
+        public async Task<Book> Update(int id, Book bookDto)
         {
             var updatebook = await _Context.Books.FirstOrDefaultAsync(b => b.BookId == id);
 
@@ -84,12 +82,11 @@ namespace Minimal_Api_Book.Services
 
                 await _Context.SaveChangesAsync();
 
-                return _mapper.Map<BookDto>(updatebook);
+                return updatebook;
             }
 
             return null;
         }
-
 
     }
 }

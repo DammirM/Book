@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Book>
+@{
+    ViewData["Title"] = "BookIndex";
+}
+
+<h1>BookIndex</h1>
+<p>
+    <a asp-action="BookCreate" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BookId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Titel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.About)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Loan)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelitem => item.BookId)</td>
+
+                <td>@Html.DisplayFor(modelitem => item.Titel)</td>
+
+                <td>@Html.DisplayFor(modelitem => item.Author)</td>
+
+                <td>@Html.DisplayFor(modelitem => item.About)</td>
+
+                <td>@Html.DisplayFor(modelitem => item.Loan)</td>
+
+                <td>
+                    <a asp-action="BookDetails" class="btn btn-success" asp-route-id="@item.BookId">Details <i class="fa fa-edit"></i></a>
+
+                        <a asp-action="UpdateBook" class="btn btn-warning" asp-route-bookid="@item.BookId">
+                            Edit <i class="fa fa-edit"></i>
+                        </a>
+
+                    <a asp-action="DeleteBook" class="btn btn-danger" asp-route-BookId="@item.BookId">
+                            Delete <i class="fa fa-trash"></i>
+                    </a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>

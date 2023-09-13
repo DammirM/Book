@@ -6,7 +6,7 @@ using Minimal_Api_Book.Data;
 
 namespace Minimal_Api_Book.Services
 {
-    public class GenreRepo : IGenericRepository<GenreDto>
+    public class GenreRepo
     {
 
         private readonly DataContext _Context;
