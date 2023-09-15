@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
+using Azure;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Server;
 using Minimal_Api_Book.Data;
@@ -13,136 +15,113 @@ namespace Web_Book.Controllers
     public class BookController : Controller
     {
         private readonly IBookService _bookService;
+        private readonly ILogger<BookController> _logger;
 
-        public BookController(IBookService bookservice)
+        public BookController(IBookService bookservice, ILogger<BookController> logger)
         {
-            _bookService= bookservice;
+            _bookService = bookservice;
+            _logger = logger;
         }
-        //public async Task<IActionResult> BookIndex()
-        //{
-        //    List<Book> list = new List<Book>();
-        //    var response = await _bookService.GetAllBooks<ResponseDto>();
-        //    if (response != null)
-        //    {
-        //        list = JsonConvert.DeserializeObject<List<Book>>(Convert.ToString(response.Result));
-        //    }
-
-        //    return View(list);
-        //}
         public async Task<IActionResult> BookIndex()
         {
             List<Book> list = new List<Book>();
 
-            try
-            {
-                var response = await _bookService.GetAllBooks<ResponseDto>();
+            var response = await _bookService.GetAllBooks<ResponseDto>();
 
-                if (response != null && response.IsSuccess)
-                {
-                    list = JsonConvert.DeserializeObject<List<Book>>(Convert.ToString(response.Result));
-                }
-                else
-                {
-                    // Handle the case where the API response is not successful
-                    // You can add error messages or handle it as needed
-                    ViewBag.ErrorMessage = "Failed to retrieve book data.";
-                }
-            }
-            catch (Exception ex)
+            if (response != null && response.IsSuccess)
             {
-                // Handle any exceptions that may occur during the API call
-                ViewBag.ErrorMessage = "An error occurred: " + ex.Message;
+                list = JsonConvert.DeserializeObject<List<Book>>(Convert.ToString(response.Result));
             }
 
             return View(list);
         }
 
+        public async Task<IActionResult> BookDetails(int id)
+        {
+            var response = await _bookService.GetBookById<ResponseDto>(id);
+            if (response != null && response.IsSuccess)
+            {
+                Book model = JsonConvert.DeserializeObject<Book>(Convert.ToString(response.Result));
+                return View(model);
+            }
+            return NotFound();
+        }
+
+        public async Task<IActionResult> BookCreate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BookCreate(CreateBookDto book)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _bookService.CreateBookAsync<ResponseDto>(book);
+                if (response != null && response.IsSuccess)
+                {
+                    return RedirectToAction(nameof(BookIndex));
+                }
+            }
+            return View(book);
+        }
+
+        public async Task<IActionResult> UpdateBook(int id)
+        {
+            var response = await _bookService.GetBookById<ResponseDto>(id);
+            if (response != null && response.IsSuccess)
+            {
+                Book model = JsonConvert.DeserializeObject<Book>(Convert.ToString(response.Result));
+
+                return View(model);
+            }
+            return NotFound();
+        }
+
+        
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateBook(Book book)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var response = await _bookService.UpdateBookAsync<ResponseDto>(book);
 
 
+                if (response != null && response.IsSuccess)
+                {
+
+                    return RedirectToAction(nameof(BookIndex));
+                }
+            }
+            return View(book);
+        }
 
 
+        public async Task<IActionResult> Deletebook(int id)
+        {
+            var response = await _bookService.GetBookById<ResponseDto>(id);
+            if (response != null && response.IsSuccess)
+            {
+                Book model = JsonConvert.DeserializeObject<Book>(Convert.ToString(response.Result));
+                return View(model);
+            }
+            return NotFound();
+        }
 
 
-        //public async Task<IActionResult> BookDetails(int id)
-        //{
-        //    var response = await _bookService.GetBookById<ResponseDto>(id);
-        //    if (response != null && response.IsSuccess)
-        //    {
-        //        BookDto model = JsonConvert.DeserializeObject<BookDto>(Convert.ToString(response.Result));
-        //        return View(model);
-        //    }
-        //    return NotFound();
-        //}
-
-        //public async Task<IActionResult> BookCreate()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> BookCreate(Book book)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var response = await _bookService.CreateBookAsync<ResponseDto>();
-        //        if (response != null)
-        //        {
-        //            return RedirectToAction(nameof(BookIndex));
-        //        }
-        //    }
-        //    return View(book);
-        //}
-
-        //public async Task<IActionResult> UpdateBook(int id)
-        //{
-        //    var response = await _bookService.GetBookById<ResponseDto>(id);
-        //    if (response != null && response.IsSuccess)
-        //    {
-        //        BookDto model = JsonConvert.DeserializeObject<BookDto>(Convert.ToString(response.Result));
-        //        return View(model);
-        //    }
-        //    return NotFound();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateBook(Book model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var response = await _bookService.UpdateBookAsync<BookDto>(model);
-        //        if (response != null)
-        //        {
-        //            return RedirectToAction(nameof(model));
-        //        }
-        //    }
-        //    return View(model);
-        //}
-
-
-        //public async Task<IActionResult> Deletebook(int id)
-        //{
-        //    var response = await _bookService.GetBookById<ResponseDto>(id);
-        //    if (response != null && response.IsSuccess)
-        //    {
-        //        BookDto model = JsonConvert.DeserializeObject<BookDto>(Convert.ToString(response.Result));
-        //        return View(model);
-        //    }
-        //    return NotFound();
-        //}
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> DeleteBook(BookDt model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var response = await _bookService.DeleteBookByIdAsync<BookDto>(model.BookId);
-        //        if (response != null && response.iss)
-        //        {
-        //            return RedirectToAction(nameof(model));
-        //        }
-        //    }
-        //    return NotFound();
-        //}
+        [HttpPost]
+        public async Task<IActionResult> DeleteBook(Book model)
+        {
+            
+                var response = await _bookService.DeleteBookAsync<ResponseDto>(model.BookId);
+                if (response != null && response.IsSuccess)
+                {
+                    return RedirectToAction(nameof(BookIndex));
+                }
+            
+            return NotFound();
+        }
     }
 }

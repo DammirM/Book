@@ -68,17 +68,17 @@ namespace Minimal_Api_Book.Services
         }
 
 
-        public async Task<Book> Update(int id, Book bookDto)
+        public async Task<Book> Update(int id, Book book)
         {
             var updatebook = await _Context.Books.FirstOrDefaultAsync(b => b.BookId == id);
 
             if (updatebook != null)
             {
-                updatebook.Titel = bookDto.Titel;
-                updatebook.Author = bookDto.Author;
-                updatebook.About = bookDto.About;
-                updatebook.Loan = bookDto.Loan;
-                updatebook.Year = bookDto.Year;
+                updatebook.Titel = book.Titel;
+                updatebook.Author = book.Author;
+                updatebook.About = book.About;
+                updatebook.Loan = book.Loan;
+                updatebook.Year = book.Year;
 
                 await _Context.SaveChangesAsync();
 

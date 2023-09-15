@@ -10,7 +10,7 @@ namespace Web_Book.Services
         {
             _clientFactory= clientFactory;
         }
-        public async Task<T> CreateBookAsync<T>(T book)
+        public async Task<T> CreateBookAsync<T>(CreateBookDto book)
         {
             return await this.SendAsync<T>(new Models.ApiRequest()
             {
@@ -21,12 +21,12 @@ namespace Web_Book.Services
             });
         }
 
-        public async Task<T> DeleteBookByIdAsync<T>(int id)
+        public async Task<T> DeleteBookAsync<T>(int id)
         {
             return await this.SendAsync<T>(new Models.ApiRequest
             {
                 ApiType = StaticDetails.ApiType.DELETE,
-                Url = StaticDetails.BookApiBase + "/api/coupon/" + id,
+                Url = StaticDetails.BookApiBase + "/api/book/" + id,
                 Accesstoken = ""
             });
         }
@@ -51,13 +51,13 @@ namespace Web_Book.Services
             });
         }
 
-        public async Task<T> UpdateBookAsync<T>(T book)
+        public async Task<T> UpdateBookAsync<T>(Book newbook)
         {
             return await this.SendAsync<T>(new Models.ApiRequest()
             {
                 ApiType = StaticDetails.ApiType.PUT,
-                Data = book,
-                Url = StaticDetails.BookApiBase + "/api/",
+                Data = newbook,
+                Url = StaticDetails.BookApiBase + $"/api/book/{newbook.BookId}",
                 Accesstoken = ""
             });
         }

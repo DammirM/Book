@@ -1,6 +1,6 @@
 ﻿namespace Minimal_Api_Book.Data
 {
-    public class GenreDto
+    public class CreateGenreDto
     {
         public string GenreName { get; set; }
     }

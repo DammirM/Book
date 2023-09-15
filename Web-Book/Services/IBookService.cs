@@ -6,9 +6,9 @@ namespace Web_Book.Services
     {
 
         Task<T> GetAllBooks<T>();
-        //Task<T> GetBookById<T>(int id);
-        //Task<T> CreateBookAsync<T>(T book);
-        //Task<T> UpdateBookAsync<T>(T book);
-        //Task<T> DeleteBookByIdAsync<T>(int id);
+        Task<T> GetBookById<T>(int id);
+        Task<T> CreateBookAsync<T>(CreateBookDto book);
+        Task<T> UpdateBookAsync<T>(Book book);
+        Task<T> DeleteBookAsync<T>(int id);
     }
 }

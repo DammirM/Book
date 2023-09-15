@@ -1,15 +1,15 @@
-﻿@model CreateBookDto
+﻿@model Book
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "BookDetails";
 }
 
-<h1>Details</h1>
+<h1>BookDetails</h1>
 
 <div>
-    <h4>BookDto</h4>
     <hr/>
     <dl class="row">
+
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Titel)
         </dt>
@@ -32,6 +32,14 @@
 
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.About)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Year)
         </dd>
 
         <dt class="col-sm-2">

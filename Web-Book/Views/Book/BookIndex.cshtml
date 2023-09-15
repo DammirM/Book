@@ -24,6 +24,9 @@
                 @Html.DisplayNameFor(model => model.About)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Year)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Loan)
             </th>
         </tr>
@@ -40,16 +43,18 @@
 
                 <td>@Html.DisplayFor(modelitem => item.About)</td>
 
+                <td>@Html.DisplayFor(modelitem => item.Year)</td>
+
                 <td>@Html.DisplayFor(modelitem => item.Loan)</td>
 
                 <td>
                     <a asp-action="BookDetails" class="btn btn-success" asp-route-id="@item.BookId">Details <i class="fa fa-edit"></i></a>
 
-                        <a asp-action="UpdateBook" class="btn btn-warning" asp-route-bookid="@item.BookId">
+                        <a asp-action="UpdateBook" class="btn btn-warning" asp-route-id="@item.BookId">
                             Edit <i class="fa fa-edit"></i>
                         </a>
 
-                    <a asp-action="DeleteBook" class="btn btn-danger" asp-route-BookId="@item.BookId">
+                    <a asp-action="DeleteBook" class="btn btn-danger" asp-route-id="@item.BookId">
                             Delete <i class="fa fa-trash"></i>
                     </a>
 

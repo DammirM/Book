@@ -8,7 +8,7 @@ namespace Web_Book.Services
     {
         public ResponseDto responseModel { get; set; }
         public IHttpClientFactory _httpClient { get; set; }
-
+        
         public BaseService(IHttpClientFactory httpClient)
         {
             _httpClient= httpClient;

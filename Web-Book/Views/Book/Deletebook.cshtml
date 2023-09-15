@@ -1,0 +1,44 @@
+﻿@model Book
+<div>
+    <form asp-action="Deletebook">
+        <input asp-for="BookId" hidden />
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <label asp-for="Titel" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Titel" disabled class="form-control" />
+            </div>
+            <div class="col-2">
+                <label asp-for="Author" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Author" disabled class="form-control" />
+            </div>
+            <div class="col-2">
+                <label asp-for="About" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="About" disabled class="form-control" />
+            </div>
+            <div class="col-2">
+                <label asp-for="Year" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Year" disabled class="form-control" />
+            </div>
+            <div class="col-2">
+                <label asp-for="GenreId" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="GenreId" disabled class="form-control" />
+            </div>
+
+            <div class="col-5">
+                <input type="submit" value="Delete" class="btn btn-danger" />
+                <a asp-action="BookIndex">Back To List</a>
+            </div>
+        </div>
+    </form>
+</div>

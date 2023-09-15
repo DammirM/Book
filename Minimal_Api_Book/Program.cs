@@ -25,6 +25,7 @@ builder.Services.AddAutoMapper(typeof(AutoMapperConfig).Assembly);
 
 // DTO
 builder.Services.AddScoped<IGenericRepository<Book,CreateBookDto>, BookRepo>();
+builder.Services.AddScoped<IGenericRepository<Genre,CreateGenreDto>, GenreRepo>();
 
 var app = builder.Build();
 
@@ -41,28 +42,19 @@ app.UseHttpsRedirection();
 app.MapGet("/api/books", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo) =>
 {
     APIResponse response = new APIResponse();
-    var books = await repo.GetAll();
-
-    if (books != null && books.Any()) // Check if there are books
-    {
-        response.Result = books;
-        response.IsSuccess = true;
-        response.StatusCode = System.Net.HttpStatusCode.OK;
-        return Results.Ok(response);
-    }
-    else
-    {
-        response.IsSuccess = false;
-        response.StatusCode = System.Net.HttpStatusCode.NotFound;
-        response.ErrorMessages = new List<string> { "No Books Found" };
-        return Results.NotFound(response);
-    }
+    
+    response.Result = await repo.GetAll();
+    response.IsSuccess = true;
+    response.StatusCode = System.Net.HttpStatusCode.OK;
+    return Results.Ok(response);
+    
 }).Produces(200);
 
 app.MapGet("/api/book/{id:int}", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo, int id) =>
 {
 
     APIResponse response = new APIResponse();
+
     response.Result = await repo.GetSingleById(id);
     response.IsSuccess = true;
     response.StatusCode = System.Net.HttpStatusCode.OK;
@@ -79,7 +71,7 @@ app.MapPost("api/book", async ([FromServices] IGenericRepository<Book, CreateBoo
     var addBook = await repo.Add(book);
     if (addBook == null)
     {
-        return Results.BadRequest($"Book with the Title: {book.Titel} and Author: {book.Author} already exists");
+        return Results.BadRequest(response);
     }
 
     response.Result = addBook;
@@ -90,7 +82,7 @@ app.MapPost("api/book", async ([FromServices] IGenericRepository<Book, CreateBoo
 }).WithName("CreateBook").Accepts<CreateBookDto>("application/json").Produces<APIResponse>(201).Produces(400);
 
 
-app.MapPut("api/book/{id:int}", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo,Book book, int id) => 
+app.MapPut("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto> repo,Book book, int id) => 
 {
 
     APIResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
@@ -98,15 +90,17 @@ app.MapPut("api/book/{id:int}", async ([FromServices] IGenericRepository<Book, C
     var updatebook = await repo.Update(id,book);
     if (updatebook != null)
     {
+
         response.Result = updatebook;
         response.IsSuccess = true;
         response.StatusCode = System.Net.HttpStatusCode.OK;
+
         return Results.Ok(response);
     }
-    return Results.NotFound($"BookId: {id} not found");
-}).WithName("UpdateBook").Accepts<CreateBookDto>("application/json").Produces<APIResponse>(200).Produces(400);
+    return Results.NotFound(response);
+}).WithName("UpdateBook").Accepts<Book>("application/json").Produces<APIResponse>(200).Produces(400);
 
-app.MapDelete("api/book/{id:int}", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo, int id) =>
+app.MapDelete("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto> repo, int id) =>
 {
 
     APIResponse response = new APIResponse() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
@@ -165,22 +159,39 @@ app.MapGet("/api/book/loan", async ([FromServices] IGenericRepository<Book, Crea
 
 // All below is genre CRUD
 
-//app.MapGet("/api/genre", async (IGenericRepository<Genre, GenreDto> repo) =>
-//{
-//    var genres = await repo.GetAll();
+app.MapGet("/api/genre", async ([FromServices] IGenericRepository<Genre, CreateGenreDto> repo) =>
+{
+    APIResponse response = new APIResponse();
 
-//    return Results.Ok(genres);
-//});
+    var genres = await repo.GetAll();
 
-//app.MapGet("/api/genre/{id:int}", async (IGenericRepository<Genre, GenreDto> repo, int id) =>
-//{
-//    var genre = await repo.GetSingleById(id);
-//    if (genre != null)
-//    {
-//        return Results.Ok(genre);
-//    }
-//    return Results.NotFound($"Genre with ID:{id} not found");
-//});
+    if (genres != null && genres.Any()) // Check if there are books
+    {
+        response.Result = genres;
+        response.IsSuccess = true;
+        response.StatusCode = System.Net.HttpStatusCode.OK;
+        return Results.Ok(response);
+    }
+    else
+    {
+        response.IsSuccess = false;
+        response.StatusCode = System.Net.HttpStatusCode.NotFound;
+        response.ErrorMessages = new List<string> { "No Genre Found" };
+        return Results.NotFound(response);
+    }
+}).Produces(200);
+
+app.MapGet("/api/genre/{id:int}", async (IGenericRepository<Genre, CreateGenreDto> repo, int id) =>
+{
+    APIResponse response = new APIResponse();
+
+    response.Result = await repo.GetSingleById(id);
+    response.IsSuccess = true;
+    response.StatusCode = System.Net.HttpStatusCode.OK;
+
+
+    return Results.Ok(response);
+});
 
 //app.MapPost("/api/genre", async (IGenericRepository<Genre, GenreDto> repo, GenreDto genre) =>
 //{

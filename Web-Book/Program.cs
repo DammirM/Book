@@ -13,6 +13,7 @@ namespace Web_Book
 
             builder.Services.AddHttpClient<IBookService, BookService>();
             builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddLogging();
 
             StaticDetails.BookApiBase = builder.Configuration["ServiceUrls:BooksDbApi"];
 

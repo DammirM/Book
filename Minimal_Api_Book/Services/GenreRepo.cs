@@ -6,7 +6,7 @@ using Minimal_Api_Book.Data;
 
 namespace Minimal_Api_Book.Services
 {
-    public class GenreRepo
+    public class GenreRepo : IGenericRepository<Genre, CreateGenreDto>
     {
 
         private readonly DataContext _Context;
@@ -18,16 +18,16 @@ namespace Minimal_Api_Book.Services
             _mapper = mapper;
         }
 
-        public async Task<GenreDto> Add(GenreDto genreDto)
+        public async Task<CreateGenreDto> Add(CreateGenreDto genreDto)
         {
-            var genre = _mapper.Map<Genre>(genreDto); 
+            var genre = _mapper.Map<Genre>(genreDto);
             _Context.Genres.Add(genre);
             await _Context.SaveChangesAsync();
 
-            return _mapper.Map<GenreDto>(genre); 
+            return _mapper.Map<CreateGenreDto>(genre);
         }
 
-        public async Task<GenreDto> Delete(int id)
+        public async Task<Genre> Delete(int id)
         {
             var genreToDelete = await _Context.Genres.FirstOrDefaultAsync(g => g.GenreId == id);
 
@@ -36,39 +36,37 @@ namespace Minimal_Api_Book.Services
                 _Context.Genres.Remove(genreToDelete);
                 await _Context.SaveChangesAsync();
 
-                return _mapper.Map<GenreDto>(genreToDelete); 
+                return genreToDelete;
             }
 
             return null;
         }
 
-        public async Task<IEnumerable<GenreDto>> GetAll()
+        public async Task<IEnumerable<Genre>> GetAll()
         {
-            var genres = await _Context.Genres
-                .ProjectTo<GenreDto>(_mapper.ConfigurationProvider) 
-                .ToListAsync();
+            var genre = await _Context.Genres.ToListAsync();
 
-            return genres;
+            return genre;
         }
 
-        public async Task<GenreDto> GetSingleById(int id)
+        public async Task<Genre> GetSingleById(int id)
         {
             var genre = await _Context.Genres.FirstOrDefaultAsync(g => g.GenreId == id);
 
-            return _mapper.Map<GenreDto>(genre); 
+            return genre;
         }
 
-        public async Task<GenreDto> Update(int id, GenreDto genreDto)
+        public async Task<Genre> Update(int id, Genre genre)
         {
             var updateGenre = await _Context.Genres.FirstOrDefaultAsync(g => g.GenreId == id);
 
             if (updateGenre != null)
             {
-                updateGenre.GenreName = genreDto.GenreName;
+                updateGenre.GenreName = genre.GenreName;
 
                 await _Context.SaveChangesAsync();
 
-                return _mapper.Map<GenreDto>(updateGenre); 
+                return updateGenre;
             }
 
             return null;
