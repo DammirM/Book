@@ -20,11 +20,21 @@ namespace Minimal_Api_Book.Services
 
         public async Task<CreateGenreDto> Add(CreateGenreDto genreDto)
         {
+            var existingGenre = await _Context.Genres.FirstOrDefaultAsync(b =>
+                b.GenreName == genreDto.GenreName);
+
+            if (existingGenre != null)
+            {
+                return null;
+            }
+
             var genre = _mapper.Map<Genre>(genreDto);
-            _Context.Genres.Add(genre);
+
+            var addedGenre = await _Context.Genres.AddAsync(genre);
             await _Context.SaveChangesAsync();
 
-            return _mapper.Map<CreateGenreDto>(genre);
+            return _mapper.Map<CreateGenreDto>(addedGenre.Entity);
+
         }
 
         public async Task<Genre> Delete(int id)
@@ -35,7 +45,6 @@ namespace Minimal_Api_Book.Services
             {
                 _Context.Genres.Remove(genreToDelete);
                 await _Context.SaveChangesAsync();
-
                 return genreToDelete;
             }
 

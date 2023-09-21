@@ -2,12 +2,12 @@
 
 namespace Minimal_Api_Book.Services
 {
-    public interface IGenericRepository<TBooks, TCreateBook>
+    public interface IGenericRepository<T, TCreate>
     {
-        Task<TCreateBook> Add(TCreateBook t);
-        Task<IEnumerable<TBooks>> GetAll(); 
-        Task<TBooks> GetSingleById(int id); 
-        Task<TBooks> Update(int id, TBooks t);
-        Task<TBooks> Delete(int id);
+        Task<TCreate> Add(TCreate t);
+        Task<IEnumerable<T>> GetAll(); 
+        Task<T> GetSingleById(int id); 
+        Task<T> Update(int id, T t);
+        Task<T> Delete(int id);
     }
 }

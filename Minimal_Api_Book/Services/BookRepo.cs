@@ -79,6 +79,7 @@ namespace Minimal_Api_Book.Services
                 updatebook.About = book.About;
                 updatebook.Loan = book.Loan;
                 updatebook.Year = book.Year;
+                updatebook.GenreId= book.GenreId;
 
                 await _Context.SaveChangesAsync();
 

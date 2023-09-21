@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Server;
 using Minimal_Api_Book.Data;
+using Minimal_Api_Book.Services;
 using Newtonsoft.Json;
 using System.Reflection.Metadata;
 using Web_Book.Models;
@@ -78,7 +79,7 @@ namespace Web_Book.Controllers
             return NotFound();
         }
 
-        
+
 
         [HttpPost]
         public async Task<IActionResult> UpdateBook(Book book)
@@ -114,14 +115,42 @@ namespace Web_Book.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteBook(Book model)
         {
-            
-                var response = await _bookService.DeleteBookAsync<ResponseDto>(model.BookId);
-                if (response != null && response.IsSuccess)
-                {
-                    return RedirectToAction(nameof(BookIndex));
-                }
-            
+
+            var response = await _bookService.DeleteBookAsync<ResponseDto>(model.BookId);
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(BookIndex));
+            }
+
             return NotFound();
         }
+
+        public async Task<IActionResult> AvailableBooksForLoan()
+        {
+
+            List<Book> list = new List<Book>();
+
+            var response = await _bookService.GetAllBooks<ResponseDto>();
+
+            if (response != null && response.IsSuccess)
+            {
+                list = JsonConvert.DeserializeObject<List<Book>>(Convert.ToString(response.Result));
+
+                // Filter the list to show only available books for loan
+                list = list.Where(b => b.Loan).ToList();
+            }
+
+            return View(list);
+        }
+
+        public async Task<IActionResult> MyIndex()
+        {
+            {
+                return View();
+            }
+
+        }
+
+
     }
 }

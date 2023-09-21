@@ -61,5 +61,16 @@ namespace Web_Book.Services
                 Accesstoken = ""
             });
         }
+
+        public async Task<T> AvailableBooksForLoan<T>()
+        {
+            return await this.SendAsync<T>(new Models.ApiRequest()
+            {
+                ApiType = StaticDetails.ApiType.GET,
+                Url = StaticDetails.BookApiBase + "/api/book/loan",
+                Accesstoken = ""
+            });
+        }
+
     }
 }

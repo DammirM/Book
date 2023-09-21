@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Minimal_Api_Book;
 using static System.Reflection.Metadata.BlobBuilder;
+using Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +39,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
+// Book Crud
 app.MapGet("/api/books", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo) =>
 {
     APIResponse response = new APIResponse();
@@ -46,6 +47,7 @@ app.MapGet("/api/books", async ([FromServices] IGenericRepository<Book, CreateBo
     response.Result = await repo.GetAll();
     response.IsSuccess = true;
     response.StatusCode = System.Net.HttpStatusCode.OK;
+
     return Results.Ok(response);
     
 }).Produces(200);
@@ -55,12 +57,19 @@ app.MapGet("/api/book/{id:int}", async ([FromServices] IGenericRepository<Book, 
 
     APIResponse response = new APIResponse();
 
-    response.Result = await repo.GetSingleById(id);
-    response.IsSuccess = true;
-    response.StatusCode = System.Net.HttpStatusCode.OK;
+    var BookId = await repo.GetSingleById(id);
 
+    if (BookId != null )
+    {
+        response.Result = BookId;
+        response.IsSuccess = true;
+        response.StatusCode = System.Net.HttpStatusCode.OK;
 
-    return Results.Ok(response);
+        return Results.Ok(response);
+    }
+    
+
+    return Results.NotFound($"Book with the BookId: {id} does not exist");
     
 }).WithName("GetBook");
 
@@ -71,7 +80,7 @@ app.MapPost("api/book", async ([FromServices] IGenericRepository<Book, CreateBoo
     var addBook = await repo.Add(book);
     if (addBook == null)
     {
-        return Results.BadRequest(response);
+        return Results.BadRequest($"Book with Title: {book.Titel} and Author: {book.Author} already exist");
     }
 
     response.Result = addBook;
@@ -97,7 +106,9 @@ app.MapPut("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto> r
 
         return Results.Ok(response);
     }
-    return Results.NotFound(response);
+
+    return Results.NotFound("Update was not succesfull");
+
 }).WithName("UpdateBook").Accepts<Book>("application/json").Produces<APIResponse>(200).Produces(400);
 
 app.MapDelete("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto> repo, int id) =>
@@ -114,30 +125,52 @@ app.MapDelete("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto
         response.StatusCode = System.Net.HttpStatusCode.NoContent;
         return Results.Ok(DeleteBook);
     }
-    return Results.NotFound($"BookId: {id} not found");
+
+    return Results.NotFound($"BookId: {id} was not found");
     
 
-}).WithName("DeleteBook");
+}).WithName("DeleteBook").Produces<APIResponse>(200).Produces(400);
 
 // Find book with Genre
 
-app.MapGet("/api/book/genre/{genreId:int}", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo, int genreId) =>
+app.MapGet("/api/book/genre/{id}", async (int id, [FromServices] IGenericRepository<Book, CreateBookDto> bookRepo,
+                                            [FromServices] IGenericRepository<Genre, CreateGenreDto> genreRepo) =>
 {
-
     APIResponse response = new APIResponse();
 
-    var books = (await repo.GetAll()).Where(b => b.GenreId == genreId);
+    // Fetch books with the specified GenreId
+    var books = await bookRepo.GetAll();
 
     if (books.Any())
     {
-        response.Result = books;
-        response.IsSuccess = true;
-        response.StatusCode = System.Net.HttpStatusCode.OK;
-        return Results.Ok(response);
-    }
-    return Results.NotFound($"No books found for GenreId:{genreId}");
+        var genre = await genreRepo.GetSingleById(id);
 
-}).WithName("GenreBook");
+        if (genre != null)
+        {
+            List<BookWithGenreDto> booksWithGenre = books
+                .Where(book => book.GenreId == id)
+                .Select(book => new BookWithGenreDto
+                {
+                    Titel = book.Titel,
+                    About = book.About,
+                    Author = book.Author,
+                    Year = book.Year,
+                    Loan = book.Loan,
+                    GenreName = genre.GenreName
+                })
+                .ToList();
+
+            response.Result = booksWithGenre;
+            response.IsSuccess = true;
+            response.StatusCode = System.Net.HttpStatusCode.OK;
+            return Results.Ok(response);
+        }
+    }
+
+    return Results.NotFound($"No books found for GenreId: {id}");
+
+}).WithName("BooksByGenre");
+
 
 // Find Books available for loan
 
@@ -157,72 +190,89 @@ app.MapGet("/api/book/loan", async ([FromServices] IGenericRepository<Book, Crea
     return Results.NotFound("No available books for loan found.");
 });
 
-// All below is genre CRUD
+// All below is genre Genre CRUD
 
-app.MapGet("/api/genre", async ([FromServices] IGenericRepository<Genre, CreateGenreDto> repo) =>
+app.MapGet("/api/genres", async ([FromServices] IGenericRepository<Genre, CreateGenreDto> repo) =>
 {
     APIResponse response = new APIResponse();
 
-    var genres = await repo.GetAll();
 
-    if (genres != null && genres.Any()) // Check if there are books
-    {
-        response.Result = genres;
-        response.IsSuccess = true;
-        response.StatusCode = System.Net.HttpStatusCode.OK;
-        return Results.Ok(response);
-    }
-    else
-    {
-        response.IsSuccess = false;
-        response.StatusCode = System.Net.HttpStatusCode.NotFound;
-        response.ErrorMessages = new List<string> { "No Genre Found" };
-        return Results.NotFound(response);
-    }
-}).Produces(200);
+    response.Result = await repo.GetAll();
+    response.IsSuccess = true;
+    response.StatusCode = System.Net.HttpStatusCode.OK;
+    return Results.Ok(response);
+
+
+});
 
 app.MapGet("/api/genre/{id:int}", async (IGenericRepository<Genre, CreateGenreDto> repo, int id) =>
 {
     APIResponse response = new APIResponse();
 
-    response.Result = await repo.GetSingleById(id);
+    var genreid = await repo.GetSingleById(id);
+
+    if (genreid != null)
+    {
+        response.Result = genreid;
+        response.IsSuccess = true;
+        response.StatusCode = System.Net.HttpStatusCode.OK;
+
+
+        return Results.Ok(response);
+    }
+
+    return Results.NotFound($"Genre with the GenreId: {id} does not exist");
+});
+
+app.MapPost("/api/genre", async (IGenericRepository<Genre, CreateGenreDto> repo, CreateGenreDto genre) =>
+{
+    APIResponse response = new APIResponse();
+
+
+    var addedGenre = await repo.Add(genre);
+    if (addedGenre == null)
+    {
+        return Results.BadRequest($"{genre.GenreName} already exists");
+    }
+    response.Result = addedGenre;
     response.IsSuccess = true;
-    response.StatusCode = System.Net.HttpStatusCode.OK;
-
-
+    response.StatusCode = System.Net.HttpStatusCode.Created;
     return Results.Ok(response);
 });
 
-//app.MapPost("/api/genre", async (IGenericRepository<Genre, GenreDto> repo, GenreDto genre) =>
-//{
-//    var addedGenre = await repo.Add(genre);
-//    if (addedGenre == null)
-//    {
-//        return Results.BadRequest($"{genre.GenreName} already exists");
-//    }
-//    return Results.Ok(addedGenre);
-//});
+app.MapPut("/api/genre/{id:int}", async (IGenericRepository<Genre, CreateGenreDto> repo, Genre genre, int id) =>
+{
 
-//app.MapPut("/api/genre/{id:int}", async (IGenericRepository<Genre, GenreDto> repo, Genre genre, int id) =>
-//{
-//    var updatedGenre = await repo.Update(id, genre);
-//    if (updatedGenre != null)
-//    {
-//        return Results.Ok(updatedGenre);
-//    }
-//    return Results.NotFound($"Genre with ID:{id} not found");
-//});
+    APIResponse response = new APIResponse();
+    var updatedGenre = await repo.Update(id, genre);
+    if (updatedGenre != null)
+    {
+        response.Result = updatedGenre; ;
+        response.IsSuccess = true;
+        response.StatusCode = System.Net.HttpStatusCode.OK;
 
-//app.MapDelete("/api/genre/{id:int}", async (IGenericRepository<Genre, GenreDto> repo, int id) =>
-//{
-//    var deletedGenre = await repo.Delete(id);
+        return Results.Ok(response);
+    }
 
-//    if (deletedGenre != null)
-//    {
-//        return Results.Ok(deletedGenre);
-//    }
-//    return Results.NotFound($"Genre with ID:{id} not found");
-//});
+    return Results.NotFound("Update was not succesfull");
+});
+
+app.MapDelete("/api/genre/{id:int}", async (IGenericRepository<Genre, CreateGenreDto> repo, int id) =>
+{
+    APIResponse response = new APIResponse() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
+
+    var deletedGenre = await repo.Delete(id);
+
+    if (deletedGenre != null)
+    {
+        response.Result = deletedGenre;
+        response.IsSuccess = true;
+        response.StatusCode = System.Net.HttpStatusCode.NoContent;
+        return Results.Ok(deletedGenre);
+    }
+
+    return Results.NotFound($"GenreId: {id} was not found");
+});
 
 app.Run();
 

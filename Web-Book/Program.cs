@@ -1,3 +1,6 @@
+using Minimal_Api_Book.Data;
+using Minimal_Api_Book.Services;
+using Web_Book.Controllers;
 using Web_Book.Services;
 
 namespace Web_Book
@@ -13,6 +16,7 @@ namespace Web_Book
 
             builder.Services.AddHttpClient<IBookService, BookService>();
             builder.Services.AddScoped<IBookService, BookService>();
+
             builder.Services.AddLogging();
 
             StaticDetails.BookApiBase = builder.Configuration["ServiceUrls:BooksDbApi"];
@@ -36,7 +40,7 @@ namespace Web_Book
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Book}/{action=MyIndex}/{id?}");
 
             app.Run();
         }

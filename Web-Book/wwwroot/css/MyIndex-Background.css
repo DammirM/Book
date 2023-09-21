@@ -1,0 +1,9 @@
+﻿body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-image: url('../image/photo-1529148482759-b35b25c5f217.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}

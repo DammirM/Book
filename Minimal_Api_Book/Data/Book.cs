@@ -17,6 +17,5 @@ namespace Minimal_Api_Book.Data
         public int GenreId { get; set; }
         [JsonIgnore]
         public Genre Genre { get; set; }
-
     }
 }
