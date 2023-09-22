@@ -9,5 +9,8 @@ namespace Minimal_Api_Book.Services
         Task<T> GetSingleById(int id); 
         Task<T> Update(int id, T t);
         Task<T> Delete(int id);
+
+        Task<List<Book>> GetBooksByGenreNameAsync(string genreName);
+
     }
 }

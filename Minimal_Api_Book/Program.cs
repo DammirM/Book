@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Minimal_Api_Book;
 using static System.Reflection.Metadata.BlobBuilder;
 using Azure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +26,9 @@ builder.Services.AddDbContext<DataContext>();
 builder.Services.AddAutoMapper(typeof(AutoMapperConfig).Assembly);
 
 // DTO
-builder.Services.AddScoped<IGenericRepository<Book,CreateBookDto>, BookRepo>();
+builder.Services.AddScoped<IGenericRepository<Book, CreateBookDto>, BookRepo>();
 builder.Services.AddScoped<IGenericRepository<Genre,CreateGenreDto>, GenreRepo>();
+builder.Services.AddScoped<IGenericRepository<Book, CreateBookDto>, BookRepo>();
 
 var app = builder.Build();
 
@@ -40,7 +42,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Book Crud
-app.MapGet("/api/books", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo) =>
+app.MapGet("/api/books", async ([FromServices]IGenericRepository<Book, CreateBookDto> repo) =>
 {
     APIResponse response = new APIResponse();
     
@@ -50,6 +52,18 @@ app.MapGet("/api/books", async ([FromServices] IGenericRepository<Book, CreateBo
 
     return Results.Ok(response);
     
+}).Produces(200);
+
+app.MapGet("/api/bookaa", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo,string name) =>
+{
+    APIResponse response = new APIResponse();
+
+    response.Result = await repo.GetBooksByGenreNameAsync(name);
+    response.IsSuccess = true;
+    response.StatusCode = System.Net.HttpStatusCode.OK;
+
+    return Results.Ok(response);
+
 }).Produces(200);
 
 app.MapGet("/api/book/{id:int}", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo, int id) =>
@@ -91,7 +105,7 @@ app.MapPost("api/book", async ([FromServices] IGenericRepository<Book, CreateBoo
 }).WithName("CreateBook").Accepts<CreateBookDto>("application/json").Produces<APIResponse>(201).Produces(400);
 
 
-app.MapPut("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto> repo,Book book, int id) => 
+app.MapPut("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto> repo, Book book, int id) => 
 {
 
     APIResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
@@ -130,47 +144,6 @@ app.MapDelete("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto
     
 
 }).WithName("DeleteBook").Produces<APIResponse>(200).Produces(400);
-
-// Find book with Genre
-
-app.MapGet("/api/book/genre/{id}", async (int id, [FromServices] IGenericRepository<Book, CreateBookDto> bookRepo,
-                                            [FromServices] IGenericRepository<Genre, CreateGenreDto> genreRepo) =>
-{
-    APIResponse response = new APIResponse();
-
-    // Fetch books with the specified GenreId
-    var books = await bookRepo.GetAll();
-
-    if (books.Any())
-    {
-        var genre = await genreRepo.GetSingleById(id);
-
-        if (genre != null)
-        {
-            List<BookWithGenreDto> booksWithGenre = books
-                .Where(book => book.GenreId == id)
-                .Select(book => new BookWithGenreDto
-                {
-                    Titel = book.Titel,
-                    About = book.About,
-                    Author = book.Author,
-                    Year = book.Year,
-                    Loan = book.Loan,
-                    GenreName = genre.GenreName
-                })
-                .ToList();
-
-            response.Result = booksWithGenre;
-            response.IsSuccess = true;
-            response.StatusCode = System.Net.HttpStatusCode.OK;
-            return Results.Ok(response);
-        }
-    }
-
-    return Results.NotFound($"No books found for GenreId: {id}");
-
-}).WithName("BooksByGenre");
-
 
 // Find Books available for loan
 

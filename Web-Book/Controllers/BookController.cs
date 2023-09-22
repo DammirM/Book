@@ -6,6 +6,7 @@ using Microsoft.SqlServer.Server;
 using Minimal_Api_Book.Data;
 using Minimal_Api_Book.Services;
 using Newtonsoft.Json;
+using System.Net.Http;
 using System.Reflection.Metadata;
 using Web_Book.Models;
 using Web_Book.Services;
@@ -17,6 +18,7 @@ namespace Web_Book.Controllers
     {
         private readonly IBookService _bookService;
         private readonly ILogger<BookController> _logger;
+
 
         public BookController(IBookService bookservice, ILogger<BookController> logger)
         {
@@ -86,13 +88,9 @@ namespace Web_Book.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 var response = await _bookService.UpdateBookAsync<ResponseDto>(book);
-
-
                 if (response != null && response.IsSuccess)
                 {
-
                     return RedirectToAction(nameof(BookIndex));
                 }
             }
@@ -136,7 +134,6 @@ namespace Web_Book.Controllers
             {
                 list = JsonConvert.DeserializeObject<List<Book>>(Convert.ToString(response.Result));
 
-                // Filter the list to show only available books for loan
                 list = list.Where(b => b.Loan).ToList();
             }
 
@@ -149,6 +146,33 @@ namespace Web_Book.Controllers
                 return View();
             }
 
+        }
+
+        public async Task<IActionResult> GenreSearch()
+        {
+            return View(); // Return the GenreSearch.cshtml view
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GenreSearchResults(string genreName)
+        {
+            // Call the repository method to get books by genre name
+            var response = await _bookService.GetBooksByGenreNameAsync<ResponseDto>(genreName);
+
+            if (response != null && response.IsSuccess)
+            {
+                // Deserialize the response
+                var bookList = JsonConvert.DeserializeObject<List<Book>>(Convert.ToString(response.Result));
+
+                // Filter books by genre name
+                var filteredBooks = bookList.Where(b => b.Genre != null && b.Genre.GenreName == genreName).ToList();
+
+                return View("GenreSearchResults", filteredBooks);
+            }
+
+            // No books found for the specified genre, display a message
+            ViewBag.ErrorMessage = "No books found for the specified genre.";
+            return View("GenreSearchResults", new List<Book>());
         }
 
 

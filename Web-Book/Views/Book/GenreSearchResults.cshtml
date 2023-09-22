@@ -1,0 +1,39 @@
+﻿@model List<Book>
+
+@{
+    ViewData["Title"] = "GenreSearchResults";
+}
+
+<h1>Genre Search Results</h1>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>About</th>
+                <th>Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td>@book.Titel</td>
+                    <td>@book.Author</td>
+                    <td>@book.About</td>
+                    <td>@book.Year</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No Books Available for this Genre.</p>
+    <div>
+        <a asp-action="GenreSearch" class="btn btn-success"><i class="fa fa-button"></i> Genre Search</a>
+    </div>
+}

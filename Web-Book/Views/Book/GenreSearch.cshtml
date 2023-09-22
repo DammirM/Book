@@ -1,0 +1,19 @@
+﻿@model string
+
+@{
+    ViewData["Title"] = "GenreSearch";
+}
+
+<h1>Genre Search</h1>
+
+<form method="get" asp-controller="Book" asp-action="GenreSearchResults">
+    <div class="form-group">
+        <label for="genreName">Enter Genre Name:</label>
+        <input type="text" id="genreName" name="genreName" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+
+
+

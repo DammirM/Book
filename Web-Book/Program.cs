@@ -1,3 +1,4 @@
+using Minimal_Api_Book.Context;
 using Minimal_Api_Book.Data;
 using Minimal_Api_Book.Services;
 using Web_Book.Controllers;
@@ -16,6 +17,7 @@ namespace Web_Book
 
             builder.Services.AddHttpClient<IBookService, BookService>();
             builder.Services.AddScoped<IBookService, BookService>();
+            
 
             builder.Services.AddLogging();
 

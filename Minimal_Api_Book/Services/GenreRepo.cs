@@ -53,9 +53,14 @@ namespace Minimal_Api_Book.Services
 
         public async Task<IEnumerable<Genre>> GetAll()
         {
-            var genre = await _Context.Genres.ToListAsync();
+            var genre = await _Context.Genres.Include(b => b.Books).ToListAsync();
 
             return genre;
+        }
+
+        public Task<List<Book>> GetBooksByGenreNameAsync(string genreName)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<Genre> GetSingleById(int id)
@@ -80,5 +85,6 @@ namespace Minimal_Api_Book.Services
 
             return null;
         }
+
     }
 }
