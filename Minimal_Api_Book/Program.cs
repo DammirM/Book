@@ -19,7 +19,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();   
 
-builder.Services.AddDbContext<DataContext>();
+builder.Services.AddDbContext<DataContext>(options => options
+            .UseSqlServer(builder.Configuration.GetConnectionString("Connection")));
 
 // AutoMapper
 
@@ -29,6 +30,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperConfig).Assembly);
 builder.Services.AddScoped<IGenericRepository<Book, CreateBookDto>, BookRepo>();
 builder.Services.AddScoped<IGenericRepository<Genre,CreateGenreDto>, GenreRepo>();
 builder.Services.AddScoped<IGenericRepository<Book, CreateBookDto>, BookRepo>();
+
+
 
 var app = builder.Build();
 
@@ -42,6 +45,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Book Crud
+// Using endpoint to Search books by GenreName
 app.MapGet("/api/books", async ([FromServices]IGenericRepository<Book, CreateBookDto> repo) =>
 {
     APIResponse response = new APIResponse();
@@ -52,18 +56,6 @@ app.MapGet("/api/books", async ([FromServices]IGenericRepository<Book, CreateBoo
 
     return Results.Ok(response);
     
-}).Produces(200);
-
-app.MapGet("/api/bookaa", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo,string name) =>
-{
-    APIResponse response = new APIResponse();
-
-    response.Result = await repo.GetBooksByGenreNameAsync(name);
-    response.IsSuccess = true;
-    response.StatusCode = System.Net.HttpStatusCode.OK;
-
-    return Results.Ok(response);
-
 }).Produces(200);
 
 app.MapGet("/api/book/{id:int}", async ([FromServices] IGenericRepository<Book, CreateBookDto> repo, int id) =>
@@ -163,7 +155,7 @@ app.MapGet("/api/book/loan", async ([FromServices] IGenericRepository<Book, Crea
     return Results.NotFound("No available books for loan found.");
 });
 
-// All below is genre Genre CRUD
+// Genre CRUD
 
 app.MapGet("/api/genres", async ([FromServices] IGenericRepository<Genre, CreateGenreDto> repo) =>
 {

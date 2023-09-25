@@ -79,12 +79,12 @@ namespace Web_Book.Services
             return this.SendAsync<List<T>>(new Models.ApiRequest()
             {
                 ApiType = StaticDetails.ApiType.GET,
-                Url = $"{StaticDetails.BookApiBase}/api/books", // Endpoint to get all books
+                Url = $"{StaticDetails.BookApiBase}/api/books",
                 Accesstoken = ""
             });
         }
 
-        public async Task<T> GetBooksByGenreNameAsync<T>(string GenreName)
+        public async Task<T> GetAllByGenreName<T>(string GenreName)
         {
             return await this.SendAsync<T>(new Models.ApiRequest()
             {

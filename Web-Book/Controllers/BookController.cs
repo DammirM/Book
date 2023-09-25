@@ -81,8 +81,6 @@ namespace Web_Book.Controllers
             return NotFound();
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> UpdateBook(Book book)
         {
@@ -97,7 +95,6 @@ namespace Web_Book.Controllers
             return View(book);
         }
 
-
         public async Task<IActionResult> Deletebook(int id)
         {
             var response = await _bookService.GetBookById<ResponseDto>(id);
@@ -108,7 +105,6 @@ namespace Web_Book.Controllers
             }
             return NotFound();
         }
-
 
         [HttpPost]
         public async Task<IActionResult> DeleteBook(Book model)
@@ -156,25 +152,18 @@ namespace Web_Book.Controllers
         [HttpGet]
         public async Task<IActionResult> GenreSearchResults(string genreName)
         {
-            // Call the repository method to get books by genre name
-            var response = await _bookService.GetBooksByGenreNameAsync<ResponseDto>(genreName);
+            var response = await _bookService.GetAllByGenreName<ResponseDto>(genreName);
 
             if (response != null && response.IsSuccess)
             {
-                // Deserialize the response
                 var bookList = JsonConvert.DeserializeObject<List<Book>>(Convert.ToString(response.Result));
 
-                // Filter books by genre name
                 var filteredBooks = bookList.Where(b => b.Genre != null && b.Genre.GenreName == genreName).ToList();
 
                 return View("GenreSearchResults", filteredBooks);
             }
 
-            // No books found for the specified genre, display a message
-            ViewBag.ErrorMessage = "No books found for the specified genre.";
-            return View("GenreSearchResults", new List<Book>());
+            return NotFound();
         }
-
-
     }
 }

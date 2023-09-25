@@ -11,12 +11,6 @@ namespace Minimal_Api_Book.Context
 
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Data Source = DAMIR ; Initial Catalog = BooksDb; \nIntegrated Security = True;TrustServerCertificate = True;");
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>()

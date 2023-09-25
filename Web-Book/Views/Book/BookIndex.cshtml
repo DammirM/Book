@@ -26,9 +26,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Year)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Genre.GenreName)
-            </th>
         </tr>
     </thead>
     <tbody>
@@ -44,8 +41,6 @@
                 <td>@Html.DisplayFor(modelitem => item.About)</td>
 
                 <td>@Html.DisplayFor(modelitem => item.Year)</td>
-
-                <td>@Html.DisplayFor(modelitem => item.Genre.GenreName)</td>
 
                 <td>
                     <a asp-action="BookDetails" class="btn btn-success" asp-route-id="@item.BookId">Details <i class="fa fa-edit"></i></a>

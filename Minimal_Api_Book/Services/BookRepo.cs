@@ -60,18 +60,9 @@ namespace Minimal_Api_Book.Services
             return books;
         }
 
-        public async Task<List<Book>> GetBooksByGenreNameAsync(string genreName)
-        {
-            var books = await _Context.Books
-            .Where(b => b.Genre.GenreName == genreName)
-            .ToListAsync();
-
-            return books;
-        }
-
         public async Task<Book> GetSingleById(int id)
         {
-            var book = await _Context.Books.FirstOrDefaultAsync(b => b.BookId == id);
+            var book = await _Context.Books.Include(g => g.Genre).FirstOrDefaultAsync(b => b.BookId == id);
 
             return book;
         }

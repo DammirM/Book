@@ -58,11 +58,6 @@ namespace Minimal_Api_Book.Services
             return genre;
         }
 
-        public Task<List<Book>> GetBooksByGenreNameAsync(string genreName)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Genre> GetSingleById(int id)
         {
             var genre = await _Context.Genres.FirstOrDefaultAsync(g => g.GenreId == id);

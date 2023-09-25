@@ -11,7 +11,7 @@ namespace Web_Book.Services
         Task<T> UpdateBookAsync<T>(Book book);
         Task<T> DeleteBookAsync<T>(int id);
         Task<T> AvailableBooksForLoan<T>();
-        Task<T> GetBooksByGenreNameAsync<T>(string GenreName);
+        Task<T> GetAllByGenreName<T>(string GenreName);
 
 
     }
