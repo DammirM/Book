@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Genre>
+@{
+    ViewData["Title"] = "GenreIndex";
+}
+
+<h1>Genre</h1>
+<p>
+    <a asp-action="GenreCreate" class="btn btn-outline-primary" style="background-color: blue; color: white;">
+        Create New <i class="fa fa-plus"></i>
+    </a>
+</p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GenreId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GenreName)
+            </th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelitem => item.GenreId)</td>
+
+                <td>@Html.DisplayFor(modelitem => item.GenreName)</td>
+
+                <td>
+                    
+
+                    <a asp-action="UpdateGenre" class="btn btn-warning" asp-route-id="@item.GenreId">
+                        Edit <i class="fa fa-edit"></i>
+                    </a>
+
+                    <a asp-action="DeleteGenre" class="btn btn-danger" asp-route-id="@item.GenreId">
+                        Delete <i class="fa fa-trash"></i>
+                    </a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+

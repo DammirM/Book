@@ -96,7 +96,6 @@ app.MapPost("api/book", async ([FromServices] IGenericRepository<Book, CreateBoo
 
 }).WithName("CreateBook").Accepts<CreateBookDto>("application/json").Produces<APIResponse>(201).Produces(400);
 
-
 app.MapPut("api/book/{id:int}", async (IGenericRepository<Book, CreateBookDto> repo, Book book, int id) => 
 {
 

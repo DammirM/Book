@@ -1,0 +1,31 @@
+﻿@model Genre
+
+
+@{
+    ViewData["Title"] = "UpdateGenre";
+}
+
+<h1>Edit Genre</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="UpdateGenre">
+            <input asp-for="GenreId" hidden />
+
+            <div class="form-group">
+                <label asp-for="GenreName" class="control-label"></label>
+                <input asp-for="GenreName" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="GenreIndex">Genre Menu</a>
+</div>
+

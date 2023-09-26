@@ -1,0 +1,27 @@
+﻿@model Genre
+<div>
+    <form asp-action="DeleteGenre">
+        <input asp-for="GenreId" hidden />
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <label asp-for="GenreId" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="GenreId" disabled class="form-control" />
+            </div>
+            <div class="col-2">
+                <label asp-for="GenreName" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="GenreName" disabled class="form-control" />
+            </div>
+
+            <div class="col-5">
+                <input type="submit" value="Delete" class="btn btn-danger" />
+                <a asp-action="GenreIndex">Back</a>
+            </div>
+        </div>
+    </form>
+</div>
+

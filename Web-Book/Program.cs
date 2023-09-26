@@ -17,7 +17,10 @@ namespace Web_Book
 
             builder.Services.AddHttpClient<IBookService, BookService>();
             builder.Services.AddScoped<IBookService, BookService>();
-            
+
+            builder.Services.AddHttpClient<IGenreService, GenreService>();
+            builder.Services.AddScoped<IGenreService, GenreService>();
+
 
             builder.Services.AddLogging();
 

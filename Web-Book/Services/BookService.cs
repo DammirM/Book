@@ -72,18 +72,6 @@ namespace Web_Book.Services
             });
         }
 
-        
-
-        public Task<List<T>> SearchbookAsync<T>()
-        {
-            return this.SendAsync<List<T>>(new Models.ApiRequest()
-            {
-                ApiType = StaticDetails.ApiType.GET,
-                Url = $"{StaticDetails.BookApiBase}/api/books",
-                Accesstoken = ""
-            });
-        }
-
         public async Task<T> GetAllByGenreName<T>(string GenreName)
         {
             return await this.SendAsync<T>(new Models.ApiRequest()
